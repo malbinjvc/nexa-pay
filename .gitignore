@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.nuxt/
+.output/
+.env
+*.log
+.turbo/
+.DS_Store
+coverage/
+cypress/videos/
+cypress/screenshots/
