@@ -23,12 +23,9 @@ describe('Authentication', () => {
 
   it('should validate email input for magic link', () => {
     cy.visit('/login');
-    // Wait for Vue/Nuxt SSR hydration to complete before interacting
-    // Hydration replaces SSR-rendered DOM nodes, causing detached element errors
+    // Verify login form elements are present and interactive
     cy.contains('Send Magic Link').should('be.visible');
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000);
-    cy.get('input[type="email"]').type('invalid-email');
+    cy.get('input[type="email"]').should('be.visible').type('invalid-email');
     cy.contains('Send Magic Link').click();
     // HTML5 validation prevents submission
     cy.get('input[type="email"]:invalid').should('exist');

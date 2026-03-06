@@ -15,11 +15,19 @@ function getSupabase() {
 
 export function useAuth() {
   function initAuth() {
+    const config = useRuntimeConfig();
+    if (!config.public.supabaseUrl || !config.public.supabaseAnonKey) {
+      loading.value = false;
+      return;
+    }
+
     const sb = getSupabase();
 
     sb.auth.getSession().then(({ data }) => {
       session.value = data.session;
       user.value = data.session?.user ?? null;
+      loading.value = false;
+    }).catch(() => {
       loading.value = false;
     });
 
