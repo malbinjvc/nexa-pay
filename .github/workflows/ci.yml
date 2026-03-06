@@ -48,7 +48,8 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
+          install: false
           working-directory: apps/e2e
-          start: npm run --prefix ../../apps/web preview
+          start: npx --prefix ../.. nuxt preview --cwd apps/web
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 60
