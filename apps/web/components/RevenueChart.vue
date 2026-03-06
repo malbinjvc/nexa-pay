@@ -45,8 +45,8 @@ const chartOptions = {
     legend: { display: false },
     tooltip: {
       callbacks: {
-        label: (ctx: { parsed: { y: number } }) =>
-          `$${ctx.parsed.y.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+        label: (ctx: { parsed: { y: number | null } }) =>
+          `$${(ctx.parsed.y ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
       },
     },
   },
@@ -58,5 +58,5 @@ const chartOptions = {
       },
     },
   },
-};
+} as const;
 </script>

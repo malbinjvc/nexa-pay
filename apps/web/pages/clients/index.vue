@@ -81,7 +81,8 @@ onMounted(async () => {
   }
 });
 
-async function createClient(data: Record<string, unknown>) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function createClient(data: any) {
   try {
     const client = await post<Client>('/api/clients', data);
     clients.value.unshift(client);

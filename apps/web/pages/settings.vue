@@ -83,7 +83,7 @@ onMounted(async () => {
     const { data } = await sb
       .from('subscriptions')
       .select('plan, status')
-      .eq('user_id', user.value?.id)
+      .eq('user_id', user.value?.id ?? '')
       .single();
     subscription.value = data;
   } catch {

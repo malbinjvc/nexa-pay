@@ -77,10 +77,11 @@ interface ClientData {
   phone: string;
   address: string;
   notes: string;
+  [key: string]: unknown;
 }
 
 const props = defineProps<{
-  initialData?: Partial<ClientData>;
+  initialData?: Record<string, unknown>;
   isEdit?: boolean;
 }>();
 
@@ -92,12 +93,12 @@ const emit = defineEmits<{
 const submitting = ref(false);
 
 const form = reactive<ClientData>({
-  name: props.initialData?.name || '',
-  email: props.initialData?.email || '',
-  company: props.initialData?.company || '',
-  phone: props.initialData?.phone || '',
-  address: props.initialData?.address || '',
-  notes: props.initialData?.notes || '',
+  name: (props.initialData?.name as string) || '',
+  email: (props.initialData?.email as string) || '',
+  company: (props.initialData?.company as string) || '',
+  phone: (props.initialData?.phone as string) || '',
+  address: (props.initialData?.address as string) || '',
+  notes: (props.initialData?.notes as string) || '',
 });
 
 async function handleSubmit() {

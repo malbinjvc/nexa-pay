@@ -29,7 +29,7 @@
           </div>
 
           <div v-if="editing" class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-            <ClientForm :initial-data="client" :is-edit="true" @submit="updateClient" @cancel="editing = false" />
+            <ClientForm :initial-data="client as Record<string, unknown>" :is-edit="true" @submit="updateClient" @cancel="editing = false" />
           </div>
 
           <div v-else class="bg-white rounded-xl border border-gray-200 p-6">
@@ -99,7 +99,8 @@ onMounted(async () => {
   }
 });
 
-async function updateClient(data: Record<string, unknown>) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function updateClient(data: any) {
   try {
     client.value = await put<ClientDetail>(`/api/clients/${route.params.id}`, data);
     editing.value = false;
