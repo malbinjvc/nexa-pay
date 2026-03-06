@@ -26,7 +26,7 @@ clientsRoutes.get('/', async (c) => {
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
 
-  if (error) return c.json({ error: error.message }, 500);
+  if (error) { console.error('DB error:', error.message); return c.json({ error: 'An internal error occurred' }, 500); }
   return c.json(data as Client[]);
 });
 
@@ -70,7 +70,7 @@ clientsRoutes.post('/', async (c) => {
     .select()
     .single();
 
-  if (error) return c.json({ error: error.message }, 500);
+  if (error) { console.error('DB error:', error.message); return c.json({ error: 'An internal error occurred' }, 500); }
 
   await invalidateCache(`clients:${userId}*`);
   return c.json(data, 201);
@@ -96,7 +96,7 @@ clientsRoutes.put('/:id', async (c) => {
     .select()
     .single();
 
-  if (error) return c.json({ error: error.message }, 500);
+  if (error) { console.error('DB error:', error.message); return c.json({ error: 'An internal error occurred' }, 500); }
   if (!data) return c.json({ error: 'Client not found' }, 404);
 
   await invalidateCache(`clients:${userId}*`);
@@ -124,7 +124,7 @@ clientsRoutes.delete('/:id', async (c) => {
     .eq('id', id)
     .eq('user_id', userId);
 
-  if (error) return c.json({ error: error.message }, 500);
+  if (error) { console.error('DB error:', error.message); return c.json({ error: 'An internal error occurred' }, 500); }
 
   await invalidateCache(`clients:${userId}*`);
   return c.json({ success: true });

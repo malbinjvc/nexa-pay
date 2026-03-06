@@ -19,8 +19,9 @@ async function checkRateLimit(key: string, config: RateLimitConfig): Promise<boo
     }
     return current <= config.requests;
   } catch {
-    // If Redis is unavailable, allow the request
-    return true;
+    // Fail closed: deny request when rate limiter is unavailable
+    console.error('Rate limiter unavailable - denying request');
+    return false;
   }
 }
 

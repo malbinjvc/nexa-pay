@@ -4,6 +4,14 @@ import { formatCurrency, formatDate } from '@nexa-pay/shared';
 const resend = new Resend(process.env.RESEND_API_KEY || '');
 const fromEmail = process.env.RESEND_FROM_EMAIL || 'invoices@nexapay.com';
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 interface SendInvoiceEmailParams {
   to: string;
   clientName: string;
@@ -20,14 +28,14 @@ export async function sendInvoiceEmail(params: SendInvoiceEmailParams): Promise<
   await resend.emails.send({
     from: fromEmail,
     to,
-    subject: `Invoice ${invoiceNumber} from ${senderName}`,
+    subject: `Invoice ${escapeHtml(invoiceNumber)} from ${escapeHtml(senderName)}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #1a1a1a;">New Invoice from ${senderName}</h2>
-        <p>Hi ${clientName},</p>
+        <h2 style="color: #1a1a1a;">New Invoice from ${escapeHtml(senderName)}</h2>
+        <p>Hi ${escapeHtml(clientName)},</p>
         <p>You have a new invoice waiting for payment.</p>
         <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <p style="margin: 4px 0;"><strong>Invoice:</strong> ${invoiceNumber}</p>
+          <p style="margin: 4px 0;"><strong>Invoice:</strong> ${escapeHtml(invoiceNumber)}</p>
           <p style="margin: 4px 0;"><strong>Amount:</strong> ${formatCurrency(total)}</p>
           <p style="margin: 4px 0;"><strong>Due Date:</strong> ${formatDate(dueDate)}</p>
         </div>
@@ -56,8 +64,8 @@ export async function sendPaymentConfirmationEmail(
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #1a1a1a;">Payment Confirmed</h2>
-        <p>Hi ${clientName},</p>
-        <p>We've received your payment of <strong>${formatCurrency(amount)}</strong> for invoice <strong>${invoiceNumber}</strong>.</p>
+        <p>Hi ${escapeHtml(clientName)},</p>
+        <p>We've received your payment of <strong>${formatCurrency(amount)}</strong> for invoice <strong>${escapeHtml(invoiceNumber)}</strong>.</p>
         <p>Thank you for your prompt payment!</p>
         <p style="color: #666; margin-top: 24px; font-size: 14px;">
           Powered by NexaPay

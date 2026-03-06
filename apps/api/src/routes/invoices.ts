@@ -26,8 +26,8 @@ invoicesRoutes.get('/', async (c) => {
   const supabase = getSupabase(c.req.header('Authorization') || '');
   const userId = c.get('userId');
   const status = c.req.query('status');
-  const page = parseInt(c.req.query('page') || '1', 10);
-  const limit = parseInt(c.req.query('limit') || '20', 10);
+  const page = Math.max(1, parseInt(c.req.query('page') || '1', 10) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(c.req.query('limit') || '20', 10) || 20));
   const offset = (page - 1) * limit;
 
   let query = supabase
@@ -43,7 +43,7 @@ invoicesRoutes.get('/', async (c) => {
 
   const { data, error, count } = await query;
 
-  if (error) return c.json({ error: error.message }, 500);
+  if (error) { console.error('DB error:', error.message); return c.json({ error: 'An internal error occurred' }, 500); }
   return c.json({ data, total: count || 0, page, limit });
 });
 
@@ -171,7 +171,7 @@ invoicesRoutes.put('/:id', async (c) => {
     .select()
     .single();
 
-  if (error) return c.json({ error: error.message }, 500);
+  if (error) { console.error('DB error:', error.message); return c.json({ error: 'An internal error occurred' }, 500); }
 
   await invalidateCache(`dashboard:${userId}*`);
   return c.json(data);
@@ -196,7 +196,7 @@ invoicesRoutes.delete('/:id', async (c) => {
   }
 
   const { error } = await supabase.from('invoices').delete().eq('id', id).eq('user_id', userId);
-  if (error) return c.json({ error: error.message }, 500);
+  if (error) { console.error('DB error:', error.message); return c.json({ error: 'An internal error occurred' }, 500); }
 
   await invalidateCache(`dashboard:${userId}*`);
   return c.json({ success: true });
@@ -287,7 +287,7 @@ invoicesRoutes.post('/:id/mark-paid', async (c) => {
     .select()
     .single();
 
-  if (error) return c.json({ error: error.message }, 500);
+  if (error) { console.error('DB error:', error.message); return c.json({ error: 'An internal error occurred' }, 500); }
 
   await invalidateCache(`dashboard:${userId}*`);
   return c.json(data);

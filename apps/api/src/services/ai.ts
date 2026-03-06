@@ -40,7 +40,19 @@ Return ONLY valid JSON with this exact structure:
 
   const content = response.choices?.[0]?.message?.content || '{}';
   const text = typeof content === 'string' ? content : '';
-  const parsed = JSON.parse(text);
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    console.error('AI returned invalid JSON:', text.slice(0, 200));
+    return {
+      cash_flow_score: 50,
+      summary: 'Unable to generate detailed analysis. Please check your data.',
+      predictions: ['Insufficient data for predictions'],
+      recommendations: ['Continue tracking your invoices for better insights'],
+    };
+  }
 
   const validated = aiInsightResponseSchema.safeParse(parsed);
   if (validated.success) {
@@ -80,7 +92,14 @@ Return ONLY valid JSON with this exact structure:
 
   const content = response.choices?.[0]?.message?.content || '{}';
   const text = typeof content === 'string' ? content : '';
-  const parsed = JSON.parse(text);
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    console.error('AI returned invalid JSON:', text.slice(0, 200));
+    return { description: sanitizedBrief };
+  }
 
   const validated = aiDraftResponseSchema.safeParse(parsed);
   if (validated.success) {
